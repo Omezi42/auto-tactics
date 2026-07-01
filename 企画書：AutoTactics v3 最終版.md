@@ -10,7 +10,7 @@
 
 ### **2.1 盤面と試合構成**
 
-* **盤面サイズ:** ![][image1]（横）![][image2] ![][image3]（縦）の正方形グリッド。  
+* **盤面サイズ:** 5（横）× 7（縦）の正方形グリッド。  
 * **ウェーブ制:** 1試合は「3ウェーブ」構成。1ウェーブにつき最大「10ターン」自動進行。10ターン経過でそのウェーブは強制終了となる。  
 * **移動と渋滞:** 同じレーンで前方に味方がいて進めない場合、後ろの駒は「待機」となる。
 
@@ -30,14 +30,18 @@
 
 攻防の公平性を保つため、ユニット配置におけるコスト上限は「両者とも同じ（例：ウェーブ毎にコスト10）」とする。事前に全9種類の中から「5種類」を選んで自軍のデッキとする。
 
-### **3.2 防衛側（データ提供・拠点構築）**
+### **3.2 配置場所の制約**
+
+* **配置制限:** ユニットを盤面に配置できるのは、**自陣側の「最前列（1列目）」のみ**とする。それ以外のマスへの直接配置は不可。
+
+### **3.3 防衛側（データ提供・拠点構築）**
 
 事前に「3ウェーブ分のユニット配置」と「壁の配置」を一括でセットし、サーバーにアップロードする。
 
 * **マップ設計コスト:** ユニット配置とは別に、防衛側には「マップ設計専用のコスト（例：コスト5）」が与えられる。  
 * **経路保証（フェイルセーフ）:** 攻撃側が絶対にゴールできない「完全封鎖マップ」を防ぐため、保存時にシステムが経路探索を行い、最低1つの突破ルートが存在しない場合は保存できない仕様とする。
 
-### **3.3 攻撃側（プレイヤー・拠点攻略）**
+### **3.4 攻撃側（プレイヤー・拠点攻略）**
 
 サーバーから防衛データをダウンロードして挑戦する。
 
@@ -84,14 +88,6 @@
 
 ## **6\. 今後の開発ステップ**
 
-1. **プロトタイピング（物理）:** 紙とペンで ![][image4] の盤面を作り、配置、10ターンの進行、三すくみと移動パターンの挙動をテストし、読み合いが成立するか確認する。  
+1. **プロトタイピング（物理）:** 紙とペンで5×7の盤面を作り、配置、10ターンの進行、三すくみと移動パターンの挙動をテストし、読み合いが成立するか確認する。  
 2. **コアゲーム実装:** Godot / Unity等で、盤面、コスト管理、完全なオートバトルの進行ロジック（味方の渋滞処理・移動と衝突の同時解決）を実装。  
 3. **非同期サーバー連携:** Firebase等を用い、防衛データ（壁＋配置）の保存と取得フローを構築する。
-
-[image1]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAaCAYAAACO5M0mAAAA/UlEQVR4XmNgGLFAAQjk5eWjpKWlZYBcZiCXQ1FRUV9OTi4NxIYrBCqyAuKfQPwfCX8FYm+EcUAA1GkMFLwGxDeA+ALQlEYgLYmiCEnhZHRxDECqwvVAvAiI7wD5j4C4XkZGhhNDIRCfBEqogPhA3wsD3XkKqGmWsbExK+kKQRxxcXFuuAADOMiq5CFBZoksjgGANpTLQ8KzCCwAsgbIOQ3EV5SVlcXQFYJosACQIwnED9EVQq3+Lysr6wcTYwHqmgF0vDlMQElJiR/IPwRUuAfEhokzABMAUEz+MBB3A3EyEJ8H4mPQRIIKQD4HarADmh4CVKQJFGJGVzNsAAAKwUVitKoxBwAAAABJRU5ErkJggg==>
-
-[image2]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAZCAYAAAA4/K6pAAAAr0lEQVR4XmNgGAWjgJpAXFycW1FRURxdHAkwysrKSgFpZnQJMFBRURFVUFBYBVRkgi4HBIxAuQR5efnJxsbGrOiScCAtLS0jJye3A+gSMyRh4jTDAJohpGmGAZghQI1TSNYMBYxAjUVA/BqIrdAlCQGQ5hyQzUpKSnJAej1amOAFcM0wZwPDQIJYQ0Cas4B+n4DuZ6IMAWrUAipqQtcMAzIyMkJA+S4QjS43CgYaAADOhSWZo2RzHwAAAABJRU5ErkJggg==>
-
-[image3]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAaCAYAAACO5M0mAAAA40lEQVR4XmNgGLFAQUHBQ15efpGsrKwOkJZExoqKiuLGxsasYIVycnLlQMH/OPBbINYEKwQy5gDxeiCehYRnA/EDoCFlQCWMDKKiojxAznQpKSkRJNeAnGMOVLhYRkaGEywAYoAEgUwWmCJlZWUxoKI1QPfJw8SwARagoklAzeHoEigA6HNboMLdSkpK/OhyKIBYhSBrl4OsRpdAAdAAfw/E0ehyKADogXSgov/A4PJFl0MB8pCA/w1UaIMuBwdA0ziAirYC8VegQmN0eTgQFxfnBiraQ1AhCIBiAmotM7rcsAIAOoQ2PwhrAVsAAAAASUVORK5CYII=>
-
-[image4]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAZCAYAAABOxhwiAAACSUlEQVR4Xu2WS0hUURjHr4xJYSRo4+C8jvNo0bhQmkXUIghqYaIbW4hbQXeCgggtDAUX0q42oqvcmrgKCiKiICiDWki00IXuXbpopb+POXc483Hn4WOC4P7gz53zPc7533PvPep5ISEhIZdOLxhjxhOJRJJhhOHVTCbTn06nJ+W3rm8GrN+DttAT+7tC0Wj0uu6RpvvoLzpxdIyGdG2zYJOKdk3XQ1ls4JTu8Zt+oz/oF0WLXHt0XTPBwzBr/kBrSp/Qh2w226F7fOOvdLwRkslkp0jHHSKpVCrOtUUnXNisGXw8cmNiFl+bxPvceJkLGr9F7zbfhNG5YrF4hbkXyM95dYxTc0dtQAs3s0J81IlVYo1vow20x/gQPWeia7o2CBYYoP69a/4spoPgKY3Qvyrz6FwZMY6+YTQvY06XLsx8l3esZqODa/6ipmV9ej+iezpXgSwUi8Xa3RhNz0zppKnd7CDm7YLr5zUtMM8Y/bvxePymztWFHZs3paNoVueqIRtA/Uu0T39W5xtBXk963zHHG4atOl/GPpYducNcLtftx33jcnXrq2FNv5CdpqeP69ugD7Ye9N1GR+z6a52rwJT+Mh1o46b0qpzIR+LWB+Ga9uzrYQ2c2Tw9g7IuWtY5Tat8vdzhXT8g5yfjz6bawe8gpuXYknPYU+/0ecwzz5QYb+hJy8Twxe7aBPqJvtr/XWpC3UMWmfaqfIhyUlGzVCgU2nQuCGpnGzYuyM5xAw9oeCo7RSiia/4Fcrrh4XE+n7+hcyEhIf8BpyHOmdqaZAH+AAAAAElFTkSuQmCC>
