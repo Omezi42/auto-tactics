@@ -9,16 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0b0f19;
-            --bg-card: #151c2f;
-            --bg-card-hover: #1e2844;
-            --border: #2a3756;
-            --text-main: #f1f5f9;
-            --text-sub: #94a3b8;
-            --offense: #00f2fe;
-            --offense-bg: rgba(0, 242, 254, 0.12);
-            --defense: #ff0844;
-            --defense-bg: rgba(255, 8, 68, 0.12);
+            --bg-main: #070a12;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --border: #374151;
+            --text-main: #f9fafb;
+            --text-sub: #9ca3af;
+            --offense: #06b6d4;
+            --offense-glow: rgba(6, 182, 212, 0.4);
+            --defense: #f43f5e;
+            --defense-glow: rgba(244, 63, 94, 0.4);
             --wall: #475569;
             --rock: #ef4444;    /* 〇 グー */
             --scissors: #10b981; /* △ チョキ */
@@ -35,25 +35,25 @@
         }
 
         body {
-            background-color: var(--bg-main);
+            background: radial-gradient(circle at top, #111827 0%, var(--bg-main) 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
         header {
             width: 100%;
-            max-width: 480px;
-            background: linear-gradient(180deg, rgba(21, 28, 47, 0.95) 0%, rgba(11, 15, 25, 0.8) 100%);
+            max-width: 500px;
+            background: rgba(17, 24, 39, 0.85);
             border-bottom: 1px solid var(--border);
-            padding: 12px 16px;
+            padding: 10px 14px;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
 
         .header-top {
@@ -66,7 +66,7 @@
         .logo {
             font-size: 1.1rem;
             font-weight: 800;
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: flex;
@@ -74,30 +74,51 @@
             gap: 6px;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
         .mode-select {
             background: var(--bg-card);
             color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 4px 8px;
-            border-radius: 6px;
+            border: 1px solid var(--offense);
+            padding: 5px 10px;
+            border-radius: 8px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             outline: none;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
         }
 
         .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.3);
-            padding: 6px 10px;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 12px;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
             font-size: 0.8rem;
         }
 
         .wave-badge {
-            background: var(--accent);
+            background: linear-gradient(90deg, var(--accent), #f97316);
             color: #000;
             font-weight: 800;
             padding: 2px 8px;
@@ -106,30 +127,33 @@
         }
 
         .score-display {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--offense);
+            font-size: 0.9rem;
         }
 
         main {
             width: 100%;
-            max-width: 480px;
-            padding: 12px;
+            max-width: 500px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         /* BANNER */
         .banner {
             background: var(--bg-card);
             border-left: 4px solid var(--offense);
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
             line-height: 1.4;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
         .banner-text {
@@ -146,43 +170,57 @@
             border-radius: 12px;
             cursor: pointer;
             border: 1px solid var(--border);
+            white-space: nowrap;
         }
 
         .debug-toggle.active {
             background: var(--accent);
             color: #000;
-            font-weight: 700;
+            font-weight: 800;
         }
 
-        /* GRID BOARD */
+        /* PATH WARNING */
+        .path-warning {
+            display: none;
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid var(--defense);
+            color: #fca5a5;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* GRID BOARD (5x7) */
         .board-container {
             position: relative;
             background: var(--bg-card);
             border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border-radius: 14px;
+            padding: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
         .board-headers {
             display: grid;
-            grid-template-columns: 24px repeat(5, 1fr);
+            grid-template-columns: 20px repeat(5, 1fr);
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-sub);
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .grid-row {
             display: grid;
-            grid-template-columns: 24px repeat(5, 1fr);
+            grid-template-columns: 20px repeat(5, 1fr);
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .row-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-sub);
             font-weight: 700;
             text-align: center;
@@ -190,8 +228,8 @@
 
         .cell {
             aspect-ratio: 1;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(7, 10, 18, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 6px;
             position: relative;
             display: flex;
@@ -203,43 +241,55 @@
         }
 
         .cell.zone-defense {
-            background: rgba(255, 8, 68, 0.08);
-            border-color: rgba(255, 8, 68, 0.2);
+            background: rgba(244, 63, 94, 0.1);
+            border-color: rgba(244, 63, 94, 0.3);
+            box-shadow: inset 0 0 8px rgba(244, 63, 94, 0.15);
         }
 
         .cell.zone-offense {
-            background: rgba(0, 242, 254, 0.08);
-            border-color: rgba(0, 242, 254, 0.2);
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
+            box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.15);
         }
 
-        .cell.goal-line::after {
-            content: '突破GOAL';
+        .cell.zone-defense::after {
+            content: '防衛1列目';
             position: absolute;
             top: 2px;
-            font-size: 0.55rem;
-            color: rgba(255, 8, 68, 0.4);
+            font-size: 0.45rem;
+            color: rgba(244, 63, 94, 0.6);
+            font-weight: 800;
+            pointer-events: none;
+        }
+
+        .cell.zone-offense::after {
+            content: '攻撃1列目';
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.45rem;
+            color: rgba(6, 182, 212, 0.6);
             font-weight: 800;
             pointer-events: none;
         }
 
         .cell:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
 
         /* PIECES & WALLS */
         .wall {
-            width: 86%;
-            height: 86%;
-            background: linear-gradient(135deg, #475569, #334155);
+            width: 88%;
+            height: 88%;
+            background: linear-gradient(135deg, #475569, #1e293b);
             border: 2px solid #64748b;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
             color: #f8fafc;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .piece {
@@ -251,7 +301,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.7);
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 10;
         }
@@ -259,11 +309,13 @@
         .piece.offense {
             background: linear-gradient(135deg, #0284c7, #0369a1);
             border: 2px solid #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
         }
 
         .piece.defense {
             background: linear-gradient(135deg, #be123c, #881337);
             border: 2px solid #fb7185;
+            box-shadow: 0 0 10px rgba(251, 113, 133, 0.4);
         }
 
         .piece.blind {
@@ -282,7 +334,7 @@
         .shape-paper { color: var(--paper); }
 
         .piece-name {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             font-weight: 700;
             color: #fff;
             max-width: 95%;
@@ -308,11 +360,11 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px 12px;
         }
 
         .panel-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             margin-bottom: 8px;
             display: flex;
@@ -324,8 +376,9 @@
             background: rgba(255,255,255,0.1);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #fff;
+            font-weight: 700;
         }
 
         .deck-grid {
@@ -335,10 +388,10 @@
         }
 
         .card {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(7, 10, 18, 0.6);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 6px 4px;
+            padding: 6px 3px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -349,24 +402,20 @@
 
         .card.selected {
             border-color: var(--offense);
-            background: var(--offense-bg);
-            box-shadow: 0 0 8px rgba(0, 242, 254, 0.4);
+            background: rgba(6, 182, 212, 0.15);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
             transform: translateY(-2px);
         }
 
-        .card.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
         .card-shape {
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .card-name {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 700;
             text-align: center;
+            color: var(--text-main);
         }
 
         .card-cost {
@@ -387,7 +436,7 @@
             border: none;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -397,16 +446,17 @@
         }
 
         .btn:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, #00f2fe, #4facfe);
-            color: #000;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
         }
 
         .btn-danger {
-            background: linear-gradient(90deg, #ff0844, #ff4e50);
+            background: linear-gradient(135deg, #f43f5e, #be123c);
             color: #fff;
         }
 
@@ -418,10 +468,10 @@
 
         /* LOGS */
         .log-box {
-            max-height: 120px;
+            max-height: 110px;
             overflow-y: auto;
-            font-size: 0.75rem;
-            background: rgba(0,0,0,0.4);
+            font-size: 0.72rem;
+            background: rgba(0,0,0,0.5);
             border-radius: 6px;
             padding: 8px;
             display: flex;
@@ -431,30 +481,30 @@
 
         .log-entry {
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 2px;
+            padding-bottom: 3px;
         }
 
         .log-turn { color: var(--accent); font-weight: 700; }
         .log-win { color: var(--offense); font-weight: 700; }
         .log-lose { color: var(--defense); }
 
-        /* TAB SELECTOR FOR DECK BUILD */
+        /* TABS */
         .tabs {
             display: flex;
             gap: 4px;
-            margin-bottom: 8px;
-            background: rgba(0,0,0,0.2);
+            margin-bottom: 6px;
+            background: rgba(0,0,0,0.3);
             padding: 4px;
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         .tab {
             flex: 1;
             padding: 6px;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             color: var(--text-sub);
         }
@@ -470,12 +520,65 @@
             background: var(--bg-card-hover);
             color: #fff;
             border: 1px solid var(--border);
-            padding: 4px 8px;
+            padding: 6px;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 4px;
+            margin-top: 6px;
             width: 100%;
             text-align: center;
+            font-weight: 700;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 440px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--offense);
+        }
+
+        .unit-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .unit-item {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .unit-item.active {
+            border-color: var(--offense);
+            background: rgba(6, 182, 212, 0.15);
         }
 
         /* POPUP SCORE */
@@ -502,18 +605,24 @@
         <div class="logo">
             <span>🛡️ AutoTactics v3</span>
         </div>
-        <select id="modeSelect" class="mode-select" onchange="changeMode()">
-            <option value="challenge">🎯 チャレンジモード</option>
-            <option value="edit">🛠️ 防衛作成(エディット)</option>
-            <option value="sandbox">🧪 自由サンドボックス</option>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="toggleAudio()" id="audioBtn" title="サウンド切り替え">🔊</button>
+            <button class="icon-btn" onclick="openDeckModal()" id="deckEditBtn" title="攻撃デッキ5種カスタマイズ">🎴</button>
+        </div>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+        <select id="modeSelect" class="mode-select" style="flex:1;" onchange="changeMode()">
+            <option value="challenge">🎯 チャレンジ (敵マップ攻略)</option>
+            <option value="edit">🛠️ 防衛作成 (5×7マップ・配置)</option>
+            <option value="sandbox">🧪 自由サンドボックス (実験)</option>
         </select>
     </div>
     <div class="status-bar">
         <div>
             <span class="wave-badge" id="waveDisplay">WAVE 1 / 3</span>
-            <span id="turnDisplay" style="margin-left:8px; font-weight:700;">Turn: 0/10</span>
+            <span id="turnDisplay" style="margin-left:6px; font-weight:700;">Turn: 0/10</span>
         </div>
-        <div class="score-display" id="scoreDisplay">合計スコア: 0点</div>
+        <div class="score-display" id="scoreDisplay">合計: 0点</div>
     </div>
 </header>
 
@@ -521,32 +630,37 @@
     <!-- メッセージバナー -->
     <div class="banner">
         <div class="banner-text" id="bannerText">
-            Wave 1: 駒の正体と壁が隠された初見殺しステージ。盤面タップでユニットを配置してください。
+             Wave 1: 敵の正体と壁が隠された初見殺しステージ。盤面最手前(7行目)をタップして駒を配置してください。
         </div>
         <div class="debug-toggle" id="debugToggle" onclick="toggleDebug()">
             👁️ 透視OFF
         </div>
     </div>
 
-    <!-- 防衛プリセット選択 (チャレンジ時) / タブ -->
+    <!-- フェイルセーフ警告 -->
+    <div class="path-warning" id="pathWarning">
+        ⚠️ 経路保証アラート: 突破ルートが壁で完全封鎖されています！少なくとも1マスの通過ルートを確保してください。
+    </div>
+
+    <!-- 防衛プリセット選択 (チャレンジ時) -->
     <div id="challengePresetBar" style="display: flex; gap: 6px; align-items: center; font-size: 0.75rem;">
         <span style="color:var(--text-sub);">敵陣プリセット:</span>
-        <select id="presetSelect" class="mode-select" style="flex:1;" onchange="loadPreset()">
-            <option value="1">ステージ1: 鉄壁と斥候陣</option>
-            <option value="2">ステージ2: ジグザグ迷宮</option>
-            <option value="3">ステージ3: 突撃兵奇襲</option>
+        <select id="presetSelect" class="mode-select" style="flex:1; padding: 4px 8px; font-size:0.75rem;" onchange="loadPreset()">
+            <option value="1">ステージ1: 鉄壁と斥候陣 (基本)</option>
+            <option value="2">ステージ2: ジグザグ反射迷宮</option>
+            <option value="3">ステージ3: 溜め突撃兵の奇襲</option>
         </select>
     </div>
 
     <!-- エディット用タブ -->
     <div id="editTabBar" class="tabs" style="display: none;">
-        <div class="tab active" onclick="setEditTab('wall')">🧱 壁配置 (コスト: <span id="wallCostText">0/5</span>)</div>
+        <div class="tab active" onclick="setEditTab('wall')">🧱 壁配置 (<span id="wallCostText">0/5</span>)</div>
         <div class="tab" onclick="setEditTab('w1')">W1防衛 (<span id="defW1CostText">0/10</span>)</div>
         <div class="tab" onclick="setEditTab('w2')">W2防衛 (<span id="defW2CostText">0/10</span>)</div>
         <div class="tab" onclick="setEditTab('w3')">W3防衛 (<span id="defW3CostText">0/10</span>)</div>
     </div>
 
-    <!-- 盤面 (5x5) -->
+    <!-- 盤面 (5横 × 7縦) -->
     <div class="board-container">
         <div class="board-headers">
             <div></div>
@@ -560,7 +674,7 @@
     <!-- ユニット選択 / コントロールパネル -->
     <div class="panel">
         <div class="panel-title">
-            <span id="deckTitle">攻撃ユニット配置 (手札)</span>
+            <span id="deckTitle">攻撃ユニット配置 (手札5種)</span>
             <span class="cost-badge" id="costDisplay">残りコスト: 10 / 10</span>
         </div>
 
@@ -569,14 +683,14 @@
         </div>
 
         <div id="dirToggleBtn" class="dir-toggle" style="display:none;" onclick="toggleSelectedDir()">
-            斜め移動の向き: ↖ 左斜め前
+            斜め移動の初動向き: ↖ 左斜め前 (タップで反転)
         </div>
     </div>
 
     <!-- アクションボタン -->
     <div class="controls">
         <button class="btn btn-secondary" id="resetBtn" onclick="resetCurrentWave()">
-            🔄 配置リセット
+            🔄 リセット
         </button>
         <button class="btn btn-primary" id="actionBtn" onclick="onActionClick()">
             ▶️ バトル開始
@@ -587,15 +701,81 @@
     <div class="panel">
         <div class="panel-title" style="margin-bottom:4px;">
             <span>バトルログ</span>
-            <span style="font-size:0.65rem; color:var(--text-sub);">〇(赤)＞△(緑)＞□(青)＞〇</span>
+            <span style="font-size:0.65rem; color:var(--text-sub);">ルール: 〇(赤)＞△(緑)＞□(青)＞〇</span>
         </div>
         <div class="log-box" id="logBox">
-            <div class="log-entry">ゲーム開始。ユニットを選択して盤面下段(攻撃エリア)に配置してください。</div>
+            <div class="log-entry">ゲーム準備完了。最手前(7行目)にユニットを配置し、バトルを開始してください。</div>
         </div>
     </div>
 </main>
 
+<!-- デッキ編成モーダル -->
+<div class="modal" id="deckModal">
+    <div class="modal-content">
+        <div class="modal-title">🎴 攻撃デッキカスタマイズ (5種選択)</div>
+        <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 10px;">
+            全9種類のユニットから、バトルに持ち込む5種類を選択してください。<br>
+            現在選択数: <span id="deckCountText" style="color:var(--offense); font-weight:800;">5/5</span>
+        </div>
+        <div class="unit-list" id="modalUnitList">
+            <!-- JSで生成 -->
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="closeDeckModal()">決定して戻る</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    /* =========================================================================
+       Web Audio API サウンドジェネレーター
+       ========================================================================= */
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function toggleAudio() {
+        audioEnabled = !audioEnabled;
+        document.getElementById('audioBtn').innerText = audioEnabled ? '🔊' : '🔇';
+    }
+
+    function playTone(freq, duration, type = 'sine', vol = 0.15) {
+        if (!audioEnabled) return;
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playSE(type) {
+        if (!audioEnabled) return;
+        if (type === 'tap') playTone(600, 0.08, 'sine', 0.1);
+        else if (type === 'start') {
+            playTone(440, 0.1, 'triangle', 0.15);
+            setTimeout(() => playTone(880, 0.2, 'triangle', 0.15), 100);
+        } else if (type === 'combat') {
+            playTone(150, 0.15, 'sawtooth', 0.2);
+        } else if (type === 'win') {
+            playTone(523.25, 0.1, 'sine', 0.15);
+            setTimeout(() => playTone(659.25, 0.1, 'sine', 0.15), 100);
+            setTimeout(() => playTone(783.99, 0.25, 'sine', 0.2), 200);
+        }
+    }
+
     /* =========================================================================
        ユニット定義 (全9種)
        ========================================================================= */
@@ -613,7 +793,6 @@
         spearman: { id: 'spearman', name: '槍兵', shape: '□', shapeClass: 'shape-paper', cost: 2, desc: '1ターン待機後、前2進む' }
     };
 
-    /* 三すくみ判定: 1(攻撃側勝利), -1(防衛側勝利), 0(あいこ) */
     function resolveRPS(shapeA, shapeB) {
         if (shapeA === shapeB) return 0;
         if (
@@ -625,8 +804,12 @@
     }
 
     /* =========================================================================
-       ゲームステート
+       ゲームステート (5横 × 7縦)
        ========================================================================= */
+    const COLS = 5;
+    const ROWS = 7;
+    let board = [];
+
     let currentMode = 'challenge'; // 'challenge' | 'edit' | 'sandbox'
     let currentWave = 1;
     let currentTurn = 0;
@@ -634,33 +817,24 @@
     let isBattling = false;
     let battleTimer = null;
     let debugMode = false;
-    let editTab = 'wall'; // 'wall' | 'w1' | 'w2' | 'w3'
+    let editTab = 'wall';
 
-    // 手札選択状態
     let selectedUnitId = 'swordsman';
     let selectedDiagDir = -1; // -1: 左斜め, 1: 右斜め
 
-    // プレイヤーが選んだ攻撃デッキ (5種固定または自由に)
-    const playerDeck = ['swordsman', 'berserker', 'scout', 'sentinel', 'spearman'];
+    // プレイヤーの選択デッキ(5種)
+    let playerDeck = ['swordsman', 'berserker', 'scout', 'sentinel', 'spearman'];
 
-    // 盤面データ (5x5)
-    // cells[y][x]: { wall: boolean, offense: Piece|null, defense: Piece|null }
-    const BOARD_SIZE = 5;
-    let board = [];
-
-    // 防衛データプリセット保持用
+    // 防衛データプリセット・カスタム保持用
     let defenseData = {
-        walls: [], // [{x, y}]
-        wave1: [], // [{typeId, x, y, dirX}]
-        wave2: [], // [{typeId, x, y, dirX}]
-        wave3: []  // [{typeId, x, y, dirX}]
+        walls: [],
+        wave1: [],
+        wave2: [],
+        wave3: []
     };
 
-    // ウェーブ開始時の配置記憶(リセット用)
-    let waveInitialOffense = [];
-
     /* =========================================================================
-       初期化とプリセット
+       初期化
        ========================================================================= */
     function init() {
         initBoard();
@@ -671,9 +845,9 @@
 
     function initBoard() {
         board = [];
-        for (let y = 0; y < BOARD_SIZE; y++) {
+        for (let y = 0; y < ROWS; y++) {
             let row = [];
-            for (let x = 0; x < BOARD_SIZE; x++) {
+            for (let x = 0; x < COLS; x++) {
                 row.push({ wall: false, offense: null, defense: null });
             }
             board.push(row);
@@ -685,53 +859,53 @@
         defenseData = { walls: [], wave1: [], wave2: [], wave3: [] };
 
         if (pId === '1') {
-            // ステージ1: 中央に壁、番兵でガード
-            defenseData.walls = [{x: 1, y: 2}, {x: 3, y: 2}];
+            // ステージ1: 5x7の中央付近に壁、最奥に番兵・剣士・斥候
+            defenseData.walls = [{x: 1, y: 3}, {x: 3, y: 3}];
             defenseData.wave1 = [
-                {typeId: 'sentinel', x: 2, y: 1},
-                {typeId: 'swordsman', x: 0, y: 1},
-                {typeId: 'scout', x: 4, y: 1, dirX: -1}
+                {typeId: 'sentinel', x: 2, y: 0},
+                {typeId: 'swordsman', x: 0, y: 0},
+                {typeId: 'scout', x: 4, y: 0, dirX: -1}
             ];
             defenseData.wave2 = [
-                {typeId: 'sentinel', x: 2, y: 1},
-                {typeId: 'berserker', x: 1, y: 1},
-                {typeId: 'scout', x: 3, y: 1, dirX: 1},
-                {typeId: 'squire', x: 0, y: 1}
+                {typeId: 'sentinel', x: 2, y: 0},
+                {typeId: 'berserker', x: 1, y: 0},
+                {typeId: 'scout', x: 3, y: 0, dirX: 1},
+                {typeId: 'squire', x: 0, y: 0}
             ];
             defenseData.wave3 = [
                 {typeId: 'spearman', x: 2, y: 0},
-                {typeId: 'assassin', x: 1, y: 1, dirX: 1},
-                {typeId: 'cavalry', x: 3, y: 1, dirX: -1},
-                {typeId: 'sentinel', x: 4, y: 1}
+                {typeId: 'assassin', x: 1, y: 0, dirX: 1},
+                {typeId: 'cavalry', x: 3, y: 0, dirX: -1},
+                {typeId: 'sentinel', x: 4, y: 0}
             ];
         } else if (pId === '2') {
             // ステージ2: ジグザグ迷宮
-            defenseData.walls = [{x: 0, y: 2}, {x: 2, y: 2}, {x: 4, y: 2}];
+            defenseData.walls = [{x: 0, y: 2}, {x: 2, y: 3}, {x: 4, y: 2}, {x: 2, y: 4}];
             defenseData.wave1 = [
-                {typeId: 'scout', x: 1, y: 1, dirX: 1},
-                {typeId: 'scout', x: 3, y: 1, dirX: -1},
-                {typeId: 'squire', x: 2, y: 1}
+                {typeId: 'scout', x: 1, y: 0, dirX: 1},
+                {typeId: 'scout', x: 3, y: 0, dirX: -1},
+                {typeId: 'squire', x: 2, y: 0}
             ];
             defenseData.wave2 = [
-                {typeId: 'cavalry', x: 1, y: 1, dirX: -1},
-                {typeId: 'assassin', x: 3, y: 1, dirX: 1},
+                {typeId: 'cavalry', x: 1, y: 0, dirX: -1},
+                {typeId: 'assassin', x: 3, y: 0, dirX: 1},
                 {typeId: 'sentinel', x: 2, y: 0}
             ];
             defenseData.wave3 = [
-                {typeId: 'berserker', x: 0, y: 1},
-                {typeId: 'berserker', x: 4, y: 1},
-                {typeId: 'heavy_infantry', x: 2, y: 1}
+                {typeId: 'berserker', x: 0, y: 0},
+                {typeId: 'berserker', x: 4, y: 0},
+                {typeId: 'heavy_infantry', x: 2, y: 0}
             ];
         } else {
-            // ステージ3: 突撃兵奇襲
-            defenseData.walls = [{x: 2, y: 1}, {x: 2, y: 3}];
+            // ステージ3: 溜め突撃兵の奇襲
+            defenseData.walls = [{x: 1, y: 2}, {x: 3, y: 2}, {x: 2, y: 4}];
             defenseData.wave1 = [
-                {typeId: 'spearman', x: 1, y: 1},
-                {typeId: 'spearman', x: 3, y: 1}
+                {typeId: 'spearman', x: 1, y: 0},
+                {typeId: 'spearman', x: 3, y: 0}
             ];
             defenseData.wave2 = [
-                {typeId: 'berserker', x: 0, y: 1},
-                {typeId: 'berserker', x: 4, y: 1},
+                {typeId: 'berserker', x: 0, y: 0},
+                {typeId: 'berserker', x: 4, y: 0},
                 {typeId: 'sentinel', x: 2, y: 0}
             ];
             defenseData.wave3 = [
@@ -753,9 +927,8 @@
         currentTurn = 0;
         initBoard();
 
-        // 壁配置
+        // 壁の配置
         if (currentMode !== 'challenge' || debugMode || currentWave > 1) {
-            // 2ウェーブ目以降は判明した壁などを表示(モックでは全てまたは発見済みを表示)
             defenseData.walls.forEach(w => board[w.y][w.x].wall = true);
         } else if (debugMode) {
             defenseData.walls.forEach(w => board[w.y][w.x].wall = true);
@@ -764,20 +937,59 @@
         // 防衛ユニット配置
         const defUnits = defenseData[`wave${waveNum}`] || [];
         defUnits.forEach(u => {
-            board[u.y][u.x].defense = {
-                typeId: u.typeId,
-                dirX: u.dirX || -1,
-                revealed: (currentWave > 1 || debugMode || currentMode !== 'challenge') // 1ウェーブ目はハーフブラインド
-            };
+            if (board[u.y] && board[u.y][u.x]) {
+                board[u.y][u.x].defense = {
+                    typeId: u.typeId,
+                    dirX: u.dirX || -1,
+                    revealed: (currentWave > 1 || debugMode || currentMode !== 'challenge')
+                };
+            }
         });
 
-        waveInitialOffense = [];
-        addLog(`--- Wave ${waveNum} 開始 --- 配置をお決めください。`);
+        addLog(`--- Wave ${waveNum} 開始 --- 最手前(7行目)に配置してください。`);
         updateUI();
     }
 
     /* =========================================================================
-       UI描画・更新
+       フェイルセーフ (経路探索チェック)
+       ========================================================================= */
+    function checkPathExists() {
+        // 壁の配置で最前列(y=6)から最奥(y=0)への通過ルートがあるかBFSで検証
+        let visited = Array.from({length: ROWS}, () => Array(COLS).fill(false));
+        let queue = [];
+
+        for (let x = 0; x < COLS; x++) {
+            if (!board[ROWS-1][x].wall) {
+                queue.push({x, y: ROWS-1});
+                visited[ROWS-1][x] = true;
+            }
+        }
+
+        while (queue.length > 0) {
+            const cur = queue.shift();
+            if (cur.y === 0) return true; // ルートあり
+
+            // 上方向への直進・斜め移動を探索
+            const nextPositions = [
+                {x: cur.x, y: cur.y - 1},
+                {x: cur.x - 1, y: cur.y - 1},
+                {x: cur.x + 1, y: cur.y - 1}
+            ];
+
+            for (const nxt of nextPositions) {
+                if (nxt.x >= 0 && nxt.x < COLS && nxt.y >= 0 && nxt.y < ROWS) {
+                    if (!visited[nxt.y][nxt.x] && !board[nxt.y][nxt.x].wall) {
+                        visited[nxt.y][nxt.x] = true;
+                        queue.push(nxt);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /* =========================================================================
+       UI更新・描画
        ========================================================================= */
     function updateUI() {
         renderBoard();
@@ -785,22 +997,30 @@
 
         document.getElementById('waveDisplay').innerText = `WAVE ${currentWave} / 3`;
         document.getElementById('turnDisplay').innerText = `Turn: ${currentTurn} / 10`;
-        document.getElementById('scoreDisplay').innerText = `合計スコア: ${totalScore}点`;
+        document.getElementById('scoreDisplay').innerText = `合計: ${totalScore}点`;
 
-        // コスト計算
+        // 経路保証チェック表示
+        const warnEl = document.getElementById('pathWarning');
+        if (currentMode === 'edit' && defenseData.walls.length > 0 && !checkPathExists()) {
+            warnEl.style.display = 'block';
+        } else {
+            warnEl.style.display = 'none';
+        }
+
+        // コスト表示
         const costEl = document.getElementById('costDisplay');
         if (currentMode === 'edit') {
-            const wCost = defenseData.walls.length * 1; // 1マス1
+            const wCost = defenseData.walls.length;
             document.getElementById('wallCostText').innerText = `${wCost}/5`;
             ['w1', 'w2', 'w3'].forEach((w, idx) => {
                 const c = defenseData[`wave${idx+1}`].reduce((sum, u) => sum + UNIT_TYPES[u.typeId].cost, 0);
                 document.getElementById(`defW${idx+1}CostText`).innerText = `${c}/10`;
             });
-            costEl.innerText = `エディットモード編集中`;
+            costEl.innerText = `編集中`;
         } else {
             let usedCost = 0;
-            for (let y = 0; y < BOARD_SIZE; y++) {
-                for (let x = 0; x < BOARD_SIZE; x++) {
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
                     const off = board[y][x].offense;
                     if (off) usedCost += UNIT_TYPES[off.typeId].cost;
                 }
@@ -808,13 +1028,13 @@
             costEl.innerText = `残りコスト: ${10 - usedCost} / 10`;
         }
 
-        // ボタンテキスト変更
+        // アクションボタン
         const btn = document.getElementById('actionBtn');
         if (isBattling) {
             btn.innerHTML = `⏸️ 一時停止`;
             btn.className = 'btn btn-danger';
         } else if (currentTurn > 0 && currentTurn < 10) {
-            btn.innerHTML = `▶️ 次のターンへ進む (自動/タップ)`;
+            btn.innerHTML = `▶️ 次ターンへ進む (自動/タップ)`;
             btn.className = 'btn btn-primary';
         } else if (currentTurn >= 10) {
             btn.innerHTML = currentWave < 3 ? `次ウェーブへ (WAVE ${currentWave+1})` : `🏆 結果発表 (リセット)`;
@@ -824,12 +1044,11 @@
             btn.className = 'btn btn-primary';
         }
 
-        // 向きトグル表示
         const uDef = UNIT_TYPES[selectedUnitId];
         const dirBtn = document.getElementById('dirToggleBtn');
         if (uDef && uDef.diagonal) {
             dirBtn.style.display = 'block';
-            dirBtn.innerText = selectedDiagDir === -1 ? `斜め移動の向き: ↖ 左斜め前` : `斜め移動の向き: ↗ 右斜め前`;
+            dirBtn.innerText = selectedDiagDir === -1 ? `斜め移動の初動向き: ↖ 左斜め前 (タップで反転)` : `斜め移動の初動向き: ↗ 右斜め前 (タップで反転)`;
         } else {
             dirBtn.style.display = 'none';
         }
@@ -839,7 +1058,7 @@
         const gridEl = document.getElementById('boardGrid');
         gridEl.innerHTML = '';
 
-        for (let y = 0; y < BOARD_SIZE; y++) {
+        for (let y = 0; y < ROWS; y++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'grid-row';
 
@@ -848,17 +1067,16 @@
             label.innerText = (y + 1);
             rowDiv.appendChild(label);
 
-            for (let x = 0; x < BOARD_SIZE; x++) {
+            for (let x = 0; x < COLS; x++) {
                 const cellEl = document.createElement('div');
                 cellEl.className = 'cell';
 
-                // ゾーン色分け
-                if (y === 0) cellEl.classList.add('zone-defense', 'goal-line');
-                if (y === BOARD_SIZE - 1) cellEl.classList.add('zone-offense');
+                // 最奥と最前列のハイライト
+                if (y === 0) cellEl.classList.add('zone-defense');
+                if (y === ROWS - 1) cellEl.classList.add('zone-offense');
 
                 const cellData = board[y][x];
 
-                // 壁の描画
                 if (cellData.wall) {
                     const wallEl = document.createElement('div');
                     wallEl.className = 'wall';
@@ -866,12 +1084,10 @@
                     cellEl.appendChild(wallEl);
                 }
 
-                // 防衛ユニット描画
                 if (cellData.defense) {
                     cellEl.appendChild(createPieceEl(cellData.defense, 'defense'));
                 }
 
-                // 攻撃ユニット描画
                 if (cellData.offense) {
                     cellEl.appendChild(createPieceEl(cellData.offense, 'offense'));
                 }
@@ -887,7 +1103,6 @@
         const def = UNIT_TYPES[pieceData.typeId];
         const el = document.createElement('div');
         
-        // ハーフブラインド状態の確認
         const isBlind = (side === 'defense' && !pieceData.revealed && !debugMode && currentMode === 'challenge' && currentWave === 1);
         el.className = `piece ${side} ${isBlind ? 'blind' : ''}`;
 
@@ -928,6 +1143,7 @@
                 <div class="card-cost">コスト ${def.cost}</div>
             `;
             card.onclick = () => {
+                playSE('tap');
                 selectedUnitId = typeId;
                 updateUI();
             };
@@ -940,41 +1156,38 @@
        ========================================================================= */
     function onCellClick(x, y) {
         if (isBattling || currentTurn > 0) return;
+        playSE('tap');
 
         if (currentMode === 'edit') {
             handleEditClick(x, y);
             return;
         }
 
-        // チャレンジまたはサンドボックスの配置
         const cell = board[y][x];
 
-        // 既に自分の駒がある場合は回収
         if (cell.offense) {
             cell.offense = null;
             updateUI();
             return;
         }
 
-        // サンドボックスで防衛側エリアをタップした場合は敵駒も消せる
         if (currentMode === 'sandbox' && cell.defense) {
             cell.defense = null;
             updateUI();
             return;
         }
 
-        // 配置可能エリアチェック (チャレンジでは最後列のみまたは空きマス)
-        if (currentMode === 'challenge' && y < BOARD_SIZE - 2) {
-            addLog('⚠️ チャレンジモードでは手前の攻撃ゾーン(4・5行目)にのみ配置できます。');
+        // チャレンジモードにおける配置制限 (自陣最前列のROWS-1行目のみ)
+        if (currentMode === 'challenge' && y !== ROWS - 1) {
+            addLog('⚠️ 配置制限: 攻撃側のユニットを配置できるのは自陣側の「最前列（7行目）」のみです！');
             return;
         }
 
         if (cell.wall || cell.defense) return;
 
-        // コストチェック
         let usedCost = 0;
-        for (let r = 0; r < BOARD_SIZE; r++) {
-            for (let c = 0; c < BOARD_SIZE; c++) {
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
                 if (board[r][c].offense) usedCost += UNIT_TYPES[board[r][c].offense.typeId].cost;
             }
         }
@@ -995,7 +1208,6 @@
     function handleEditClick(x, y) {
         const cell = board[y][x];
         if (editTab === 'wall') {
-            // 壁トグル
             if (!cell.wall && defenseData.walls.length >= 5) {
                 addLog('⚠️ 壁の配置上限(コスト5)に達しています。');
                 return;
@@ -1009,7 +1221,12 @@
                 defenseData.walls = defenseData.walls.filter(w => w.x !== x || w.y !== y);
             }
         } else {
-            // 防衛ユニット配置
+            // 防衛ユニット配置制限 (防衛側の最前列 y=0 のみ)
+            if (y !== 0) {
+                addLog('⚠️ 配置制限: 防衛側のユニットを配置できるのは自陣側の「最前列（1行目）」のみです！');
+                return;
+            }
+
             const waveIdx = editTab === 'w1' ? 0 : (editTab === 'w2' ? 1 : 2);
             const wList = defenseData[`wave${waveIdx+1}`];
 
@@ -1031,22 +1248,22 @@
     }
 
     function toggleSelectedDir() {
+        playSE('tap');
         selectedDiagDir = -selectedDiagDir;
         updateUI();
     }
 
     function toggleDebug() {
+        playSE('tap');
         debugMode = !debugMode;
         document.getElementById('debugToggle').classList.toggle('active', debugMode);
         document.getElementById('debugToggle').innerText = debugMode ? '👁️ 透視ON' : '👁️ 透視OFF';
         
-        // 隠し壁の表示に反映
         if (debugMode) {
             defenseData.walls.forEach(w => board[w.y][w.x].wall = true);
         } else if (currentMode === 'challenge' && currentWave === 1) {
-            // Wave 1でデバッグOFFにしたら壁を隠す
-            for (let y=0; y<BOARD_SIZE; y++) {
-                for (let x=0; x<BOARD_SIZE; x++) {
+            for (let y=0; y<ROWS; y++) {
+                for (let x=0; x<COLS; x++) {
                     board[y][x].wall = false;
                 }
             }
@@ -1055,32 +1272,36 @@
     }
 
     function changeMode() {
+        playSE('tap');
         currentMode = document.getElementById('modeSelect').value;
         const presetBar = document.getElementById('challengePresetBar');
         const editBar = document.getElementById('editTabBar');
         const banner = document.getElementById('bannerText');
 
+        document.getElementById('deckEditBtn').style.display = currentMode === 'challenge' ? 'flex' : 'none';
+
         if (currentMode === 'challenge') {
             presetBar.style.display = 'flex';
             editBar.style.display = 'none';
-            banner.innerText = 'Wave 1: 駒の正体と壁が隠された初見殺しステージ。盤面タップでユニットを配置してください。';
+            banner.innerText = 'Wave 1: 敵の正体と壁が隠された初見殺しステージ。最手前(7行目)に配置してください。';
             loadPreset();
         } else if (currentMode === 'edit') {
             presetBar.style.display = 'none';
             editBar.style.display = 'flex';
-            banner.innerText = '防衛作成: 壁(最大5)と各Waveの防衛ユニット(最大コスト10)を自由に配置できます。';
+            banner.innerText = '防衛作成: 壁(最大5)と各Waveの防衛ユニット(1行目のみ・最大コスト10)を配置できます。';
             initBoard();
             defenseData.walls.forEach(w => board[w.y][w.x].wall = true);
         } else {
             presetBar.style.display = 'none';
             editBar.style.display = 'none';
-            banner.innerText = 'サンドボックス: 攻防全ユニットを自由に配置・実験できるデバッグ用エリアです。';
+            banner.innerText = 'サンドボックス: 攻防両方の全ユニットを任意のマスに自由に配置できる実験モードです。';
             initBoard();
         }
         updateUI();
     }
 
     function setEditTab(tab) {
+        playSE('tap');
         editTab = tab;
         document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
         event.currentTarget.classList.add('active');
@@ -1090,30 +1311,82 @@
         if (tab !== 'wall') {
             const waveNum = tab === 'w1' ? 1 : (tab === 'w2' ? 2 : 3);
             defenseData[`wave${waveNum}`].forEach(u => {
-                board[u.y][u.x].defense = { typeId: u.typeId, dirX: u.dirX, revealed: true };
+                if (board[u.y] && board[u.y][u.x]) {
+                    board[u.y][u.x].defense = { typeId: u.typeId, dirX: u.dirX, revealed: true };
+                }
             });
         }
         updateUI();
     }
 
     function resetCurrentWave() {
+        playSE('tap');
         if (isBattling) stopBattle();
         setupWave(currentWave);
     }
 
     /* =========================================================================
-       オートバトル進行ロジック
+       デッキ編集モーダル
+       ========================================================================= */
+    function openDeckModal() {
+        playSE('tap');
+        const modal = document.getElementById('deckModal');
+        const listEl = document.getElementById('modalUnitList');
+        listEl.innerHTML = '';
+
+        Object.keys(UNIT_TYPES).forEach(typeId => {
+            const def = UNIT_TYPES[typeId];
+            const item = document.createElement('div');
+            const isActive = playerDeck.includes(typeId);
+            item.className = `unit-item ${isActive ? 'active' : ''}`;
+            item.innerHTML = `
+                <div style="font-size:1.1rem;" class="${def.shapeClass}">${def.shape}</div>
+                <div style="font-weight:700;">${def.name}</div>
+                <div style="color:var(--accent);">コスト${def.cost}</div>
+            `;
+            item.onclick = () => {
+                playSE('tap');
+                if (playerDeck.includes(typeId)) {
+                    if (playerDeck.length <= 1) return;
+                    playerDeck = playerDeck.filter(id => id !== typeId);
+                } else {
+                    if (playerDeck.length >= 5) {
+                        addLog('⚠️ デッキ上限は5種類です！');
+                        return;
+                    }
+                    playerDeck.push(typeId);
+                }
+                openDeckModal();
+            };
+            listEl.appendChild(item);
+        });
+
+        document.getElementById('deckCountText').innerText = `${playerDeck.length}/5`;
+        modal.style.display = 'flex';
+    }
+
+    function closeDeckModal() {
+        playSE('tap');
+        document.getElementById('deckModal').style.display = 'none';
+        renderDeck();
+    }
+
+    /* =========================================================================
+       オートバトル進行ロジック (5横 × 7縦)
        ========================================================================= */
     function onActionClick() {
+        playSE('start');
         if (currentMode === 'edit') {
-            addLog('💡 エディットモードで配置したデータは自動的に保存され、「チャレンジモード」へ切り替えるとテストプレイできます！');
+            if (!checkPathExists()) {
+                addLog('⚠️ 警告: 突破ルートが存在しないため、挑戦前に壁配置の見直しを推奨します！');
+            }
+            addLog('💡 エディットデータを適用し、「チャレンジモード」へ移行します！');
             document.getElementById('modeSelect').value = 'challenge';
             changeMode();
             return;
         }
 
         if (currentTurn >= 10) {
-            // 次のウェーブまたはリセット
             if (currentWave < 3) {
                 setupWave(currentWave + 1);
             } else {
@@ -1134,16 +1407,7 @@
         isBattling = true;
         updateUI();
 
-        // 0ターンの場合は初動記録
         if (currentTurn === 0) {
-            waveInitialOffense = [];
-            for (let y = 0; y < BOARD_SIZE; y++) {
-                for (let x = 0; x < BOARD_SIZE; x++) {
-                    if (board[y][x].offense) {
-                        waveInitialOffense.push({ x, y, u: JSON.parse(JSON.stringify(board[y][x].offense)) });
-                    }
-                }
-            }
             addLog('⚔️ オートバトル開始！');
         }
 
@@ -1153,7 +1417,7 @@
                 stopBattle();
                 onWaveEnd();
             }
-        }, 900);
+        }, 850);
     }
 
     function stopBattle() {
@@ -1166,21 +1430,17 @@
         currentTurn++;
         addLog(`--- ターン ${currentTurn} ---`);
 
-        // 1ステップ目移動処理
         executeStepMove(1);
-
-        // 2ステップ移動ユニット(狂戦士、軽騎兵、または偶数ターンの槍兵)の処理
         executeStepMove(2);
 
         updateUI();
     }
 
     function executeStepMove(stepNum) {
-        // 各ユニットの意図する移動先を算出
-        let moves = []; // { side: 'offense'|'defense', fromX, fromY, toX, toY, unit }
+        let moves = [];
 
-        for (let y = 0; y < BOARD_SIZE; y++) {
-            for (let x = 0; x < BOARD_SIZE; x++) {
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
                 ['offense', 'defense'].forEach(side => {
                     const u = board[y][x][side];
                     if (!u) return;
@@ -1188,63 +1448,48 @@
                     const def = UNIT_TYPES[u.typeId];
                     let stepCount = 1;
 
-                    // ユニットごとの移動ステップ数や条件
                     if (def.id === 'sentinel') stepCount = 0;
                     if (def.id === 'heavy_infantry' && currentTurn % 2 === 0) stepCount = 0;
                     if (def.id === 'spearman') stepCount = (currentTurn % 2 === 0) ? 2 : 0;
                     if (def.id === 'berserker' || def.id === 'cavalry') stepCount = 2;
 
-                    // 今回の処理ステップ(stepNum=1 or 2)に該当しない場合は動かない
                     if (stepNum > stepCount) return;
 
-                    // 移動先計算
                     let forward = side === 'offense' ? -1 : 1;
                     let nextY = y + forward;
                     let nextX = x;
 
                     if (def.diagonal) {
-                        // 斜め移動 (斥候、暗殺者、軽騎兵)
-                        // 暗殺者は偶数ターンは直進
                         if (def.id === 'assassin' && currentTurn % 2 === 0) {
                             nextX = x;
                         } else {
                             nextX = x + u.dirX;
-                            // 壁または盤面端の反射判定
-                            if (nextX < 0 || nextX >= BOARD_SIZE || board[y][nextX].wall || (nextY>=0 && nextY<BOARD_SIZE && board[nextY][nextX].wall)) {
+                            if (nextX < 0 || nextX >= COLS || board[y][nextX].wall || (nextY>=0 && nextY<ROWS && board[nextY][nextX].wall)) {
                                 u.dirX = -u.dirX;
                                 nextX = x + u.dirX;
-                                if (nextX < 0 || nextX >= BOARD_SIZE) nextX = x;
+                                if (nextX < 0 || nextX >= COLS) nextX = x;
                             }
                         }
                     }
 
-                    // 正面に壁がある場合は進めない
-                    if (nextY >= 0 && nextY < BOARD_SIZE && board[nextY][nextX].wall) {
-                        // 壁発見！ハーフブラインド時でも壁を可視化
+                    if (nextY >= 0 && nextY < ROWS && board[nextY][nextX].wall) {
                         board[nextY][nextX].wall = true;
                         addLog(`🧱 [壁発見] (${nextX+1}, ${nextY+1}) に壁が存在！`);
                         nextY = y;
                         nextX = x;
                     }
 
-                    // ゴールライン到達時の処理
                     moves.push({ side, fromX: x, fromY: y, toX: nextX, toY: nextY, unit: u });
                 });
             }
         }
 
-        // 渋滞(味方同士の重なり)判定と解決
-        // 移動先が同じ味方がいる、または前方が動けない味方の場合は待機
         moves.forEach(m => {
             if (m.toX === m.fromX && m.toY === m.fromY) return;
-            
-            // 盤面外(突破)は渋滞しない
-            if (m.toY < 0 || m.toY >= BOARD_SIZE) return;
+            if (m.toY < 0 || m.toY >= ROWS) return;
 
-            // 同じセルに移動しようとしている味方がいるかチェック
             const allyAtTarget = board[m.toY][m.toX][m.side];
             if (allyAtTarget) {
-                // その味方も今回動いて空くならOK、動かないなら渋滞で停止
                 const allyMove = moves.find(mv => mv.side === m.side && mv.fromX === m.toX && mv.fromY === m.toY);
                 if (!allyMove || (allyMove.toX === allyMove.fromX && allyMove.toY === allyMove.fromY)) {
                     m.toX = m.fromX;
@@ -1253,40 +1498,33 @@
             }
         });
 
-        // 移動と戦闘の適用
-        // まず盤面から移動対象を一度クリア
         moves.forEach(m => {
             board[m.fromY][m.fromX][m.side] = null;
         });
 
         moves.forEach(m => {
-            // 突破判定 (攻撃側が最奥Y<0に到達)
             if (m.side === 'offense' && m.toY < 0) {
                 totalScore += 3;
-                showPopup('突破 +3点!', m.fromX, 0, '#00f2fe');
-                addLog(`🚀 [突破] ${UNIT_TYPES[m.unit.typeId].name} が最奥ラインへ到達！(+3点)`);
+                playSE('win');
+                showPopup('突破 +3点!', m.fromX, 0, '#06b6d4');
+                addLog(`🚀 [突破] ${UNIT_TYPES[m.unit.typeId].name} が相手最奥ラインへ到達！(+3点)`);
                 return;
             }
-            if (m.side === 'defense' && m.toY >= BOARD_SIZE) {
-                return; // 防衛側が最前線に抜けたら消滅
+            if (m.side === 'defense' && m.toY >= ROWS) {
+                return;
             }
 
-            // セルに配置を試みる
             const targetCell = board[m.toY][m.toX];
-
-            // すれ違い戦闘のチェック: 敵が m.toX, m.toY から m.fromX, m.fromY へ移動していないか
             const enemySide = m.side === 'offense' ? 'defense' : 'offense';
             const crossingEnemy = moves.find(e => e.side === enemySide && e.fromX === m.toX && e.fromY === m.toY && e.toX === m.fromX && e.toY === m.fromY);
 
             if (crossingEnemy && m.side === 'offense') {
-                // すれ違い発生！攻撃側処理時にまとめて戦闘解決
                 handleCombat(m.unit, crossingEnemy.unit, m.toX, m.toY, true);
                 return;
             } else if (crossingEnemy && m.side === 'defense') {
-                return; // 攻撃側で解決済み
+                return;
             }
 
-            // 同一マスでの衝突チェック
             if (targetCell[enemySide]) {
                 const enemyUnit = targetCell[enemySide];
                 if (m.side === 'offense') {
@@ -1305,27 +1543,24 @@
     }
 
     function handleCombat(offUnit, defUnit, x, y, isCrossing) {
+        playSE('combat');
         const offDef = UNIT_TYPES[offUnit.typeId];
         const defDef = UNIT_TYPES[defUnit.typeId];
 
-        // 戦闘が発生した敵は正体を明かす！
         defUnit.revealed = true;
 
         const res = resolveRPS(offDef.shape, defDef.shape);
         const locText = isCrossing ? `すれ違い` : `(${x+1}, ${y+1})`;
 
         if (res === 1) {
-            // 攻撃勝利
             totalScore += 1;
             showPopup('撃破 +1点!', x, y, '#10b981');
             addLog(`<span class="log-win">💥 [戦闘勝] ${locText}: 攻撃[${offDef.name}] vs 防衛[${defDef.name}] ➔ 撃破！(+1点)</span>`);
             return offUnit;
         } else if (res === -1) {
-            // 防衛勝利
             addLog(`<span class="log-lose">💀 [戦闘負] ${locText}: 攻撃[${offDef.name}] vs 防衛[${defDef.name}] ➔ 迎撃された...</span>`);
             return defUnit;
         } else {
-            // あいこ
             addLog(`⚔️ [相打ち] ${locText}: 攻撃[${offDef.name}] vs 防衛[${defDef.name}] ➔ 両者消滅！`);
             return null;
         }
@@ -1334,8 +1569,8 @@
     function checkBattleEnd() {
         let offCount = 0;
         let defCount = 0;
-        for (let y = 0; y < BOARD_SIZE; y++) {
-            for (let x = 0; x < BOARD_SIZE; x++) {
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
                 if (board[y][x].offense) offCount++;
                 if (board[y][x].defense) defCount++;
             }
@@ -1345,13 +1580,14 @@
 
     function onWaveEnd() {
         let survivors = 0;
-        for (let y = 0; y < BOARD_SIZE; y++) {
-            for (let x = 0; x < BOARD_SIZE; x++) {
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
                 if (board[y][x].offense) survivors++;
             }
         }
         if (survivors > 0) {
             totalScore += survivors;
+            playSE('win');
             addLog(`🎉 Wave ${currentWave} 終了！ 生存ボーナス +${survivors}点！`);
         } else {
             addLog(`終了！ Wave ${currentWave} 終了時生存ユニットなし。`);
@@ -1373,8 +1609,8 @@
         el.className = 'floating-text';
         el.innerText = text;
         el.style.color = color;
-        el.style.left = `${(x / BOARD_SIZE) * 80 + 15}%`;
-        el.style.top = `${(y / BOARD_SIZE) * 80 + 10}%`;
+        el.style.left = `${(x / COLS) * 80 + 10}%`;
+        el.style.top = `${(y / ROWS) * 80 + 10}%`;
         container.appendChild(el);
         setTimeout(() => el.remove(), 1000);
     }
